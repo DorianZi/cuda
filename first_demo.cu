@@ -11,6 +11,11 @@ __global__ void kernel(int *ptr)
 
 int main(void)
 {
+    int computeMajor;
+    int computeMinor;
+    cudaDeviceGetAttribute(&computeMajor, cudaDevAttrComputeCapabilityMajor,0);
+    cudaDeviceGetAttribute(&computeMinor, cudaDevAttrComputeCapabilityMinor,0);
+    printf("Compute Capability: %d.%d\n", computeMajor, computeMinor);
     int *hptr;
     int *dptr;
     size_t size = sizeof(int);
