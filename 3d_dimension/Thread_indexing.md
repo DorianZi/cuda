@@ -1,4 +1,4 @@
-#CUDA Thread Indexing
+# CUDA Thread Indexing
 
 ![Grid of Thread Blocks](https://docs.nvidia.com/cuda/cuda-c-programming-guide/graphics/grid-of-thread-blocks.png "Grid of Thread Blocks")
 
