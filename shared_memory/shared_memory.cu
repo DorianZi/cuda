@@ -46,7 +46,7 @@ int main()
 	cout << "======[Array]=====" << endl;
 	for(int i=0; i<N; i++)
 		cout << "Array_host[" << i <<"] = " << Array_host[i] << endl;
-	cout << "======[SumArray]=====" << endl;
+	cout << "======[retArray]=====" << endl;
 	for(int i=0; i<N; i++)
 		cout << "retArray_host[" << i <<"] = " << retArray_host[i] << endl;
 
