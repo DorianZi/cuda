@@ -52,5 +52,5 @@ myKernel<<<grid,block>>>(outArray,inArray)   //inArray[64] = {0, 1, 2, 3, 4, ...
 ```
 In the multiple blocks (2 blocks in this case):
 1) each blocks has allocated a 64 unit sharedArray 
-2) thread id is 0~31 for the first block, 32~63 for the second block
+2) thread id is in [0,31] for the first block, and [32,63] for the second block
 Therefore, in the first block for example, "sharedArray[tid] = inArray[tid]" only accounts for tid in [0,31], and sharedArray[63-tid] is always ZERO
