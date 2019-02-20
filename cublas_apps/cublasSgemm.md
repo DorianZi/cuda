@@ -24,18 +24,28 @@ If regarded as 2x3 Matrix:
 
 ## Compute Matrix
 We have arrays in GPU memory: 
+```
   A = {1,2,3,4,5,6}
   B = {7,8,9,10,11,12,13,14,15,16,17,18}
+```
 And intend to compute the matrix :
+```
 [1,2,3    *   [ 7, 8, 9,10
  4,5,6]        11,12,13,14         
                15,16,17,18]
+```
 How to do it in cublas features?
 
 
 ### cublasSgemm: Compute with transposition
-Consider the cublasSgemm function which is to compute C = alpha\*A\*B + beta\*C
-Here we set alpha=1.0 and beta=0.0, so it's actually C = A\*B
+Consider the cublasSgemm function which is to compute 
+```
+C = alpha*A*B + beta*C
+```
+Here we set alpha=1.0 and beta=0.0, so it's actually
+```
+C = A*B
+```
 
 ```
 // A = {1,2,3,4,5,6}
@@ -69,10 +79,12 @@ cublasSgemm(
 
 ### cublasSgemm: Compute with no transposition
 with the theory of C^T = (B^T)*(A^T) , convert to compute to 
+```
       [ 7,11,15        [ 1,4
 C^T =   8,12,16    *     2,5
         9,13,17          3,6]
        10,14,18]
+```
 Still, we set alpha=1.0 and beta=0.0, to compute C^T = (B^T)*(A^T)
 
 ```
