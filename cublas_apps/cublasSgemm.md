@@ -8,32 +8,6 @@
 => C = ((B^T)(A^T))^T
 ```
 
-$$
-\left[
- \begin{matrix}
-   a & b & c & d & e\\
-   f & g & h & i & j \\
-   k & l & m & n & o \\
-   p & q & r & s & t
-  \end{matrix} 
-\right]
-$$
-
-```
-$$
-\left[
- \begin{matrix}
-   a & b & c & d & e\\
-   f & g & h & i & j \\
-   k & l & m & n & o \\
-   p & q & r & s & t
-  \end{matrix} 
-\right]
-$$
-
-```
-
-
 ## How is Matrix stored in CPU/GPU memory
 ```
 #define N
@@ -43,10 +17,16 @@ cudaMalloc((void**)A, N*sizeof(float));
 cudaMemcpy(A, h_A, N*sizeof(float), cudaMemcpyHostToDevice);
 ```
 If regarded as 2x3 Matrix:
-1) h_A in CPU stands for a matrix of [1,2,3
-                                      4,5,6]
-2)   A in GPU stands for a matrix of [1,3,5
-                                      2,4,6]
+1) h_A in CPU stands for a matrix of 
+       ```
+       [1,2,3
+        4,5,6]
+       ```
+2)   A in GPU stands for a matrix of 
+       ```
+       [1,3,5
+       2,4,6]
+       ```
 
 ## Compute Matrix
 We have arrays in GPU memory: 
