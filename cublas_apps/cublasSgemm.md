@@ -8,6 +8,32 @@
 => C = ((B^T)(A^T))^T
 ```
 
+$$
+\left[
+ \begin{matrix}
+   a & b & c & d & e\\
+   f & g & h & i & j \\
+   k & l & m & n & o \\
+   p & q & r & s & t
+  \end{matrix} 
+\right]
+$$
+
+```
+$$
+\left[
+ \begin{matrix}
+   a & b & c & d & e\\
+   f & g & h & i & j \\
+   k & l & m & n & o \\
+   p & q & r & s & t
+  \end{matrix} 
+\right]
+$$
+
+```
+
+
 ## How is Matrix stored in CPU/GPU memory
 ```
 #define N
