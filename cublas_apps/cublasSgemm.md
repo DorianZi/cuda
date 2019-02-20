@@ -25,8 +25,8 @@ If regarded as 2x3 Matrix:
 
 ## Compute C=A*B with cublasSgemm
 When calling a compute function, it's able to achieve transposition of the matrix.
-Consider the cublasSgemm function which is to compute C = alpha*A*B + beta*C
-Here we set alpha=1.0 and beta=0.0, so it's actually C = A*B
+Consider the cublasSgemm function which is to compute C = alpha\*A\*B + beta\*C
+Here we set alpha=1.0 and beta=0.0, so it's actually C = A\*B
 
 ```
 // A = [1,3,5
