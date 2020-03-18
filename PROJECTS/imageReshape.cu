@@ -38,8 +38,20 @@ __global__ void launchkernel(uchar* inptr, int rows, int cols, uchar* outptr, in
 } 
 
 int main(int argc, char** argvs){
+	cudaDeviceProp prop;
+	cudaGetDeviceProperties(&prop,0);
+	cout<<"==========GPU Info=========="<<endl;
+	cout<<"maxThreadsPerBlock: " << prop.maxThreadsPerBlock<<endl;
+	cout<<"maxThreadsDim[3]: " << "[ " <<prop.maxThreadsDim[0] << ", "
+		                           <<prop.maxThreadsDim[1] << ", "
+					   <<prop.maxThreadsDim[2] << " ]" << endl;
+	cout<<"maxGridSize[3]: " << "[ " <<prop.maxGridSize[0] << ", "
+		                      <<prop.maxGridSize[1] << ", "
+		                      <<prop.maxGridSize[2] << " ]" << endl;
+	cout<<"============================"<<endl;
+	
 	cv::Mat image= cv::imread(argvs[1]);
-	cout<<"image.rows * image.cols = "<<image.rows<<" * "<<image.cols<<endl;
+	cout<<"Input Image Size: "<<image.rows<<" * "<<image.cols<<endl;
 	
 	uchar *inptr;
 	uchar *outptr;
@@ -52,7 +64,7 @@ int main(int argc, char** argvs){
 	cudaMalloc(&outptr, outByteSize);
 	cudaMemcpy(inptr, image.data, imgByteSize, cudaMemcpyHostToDevice);
 	dim3 block(1024,1,1);
-	dim3 grid(128,1,1);	
+	dim3 grid(1024,1,1);	
 	launchkernel<<<grid,block>>>(inptr, image.rows, image.cols, outptr, out_rows, out_cols);
 	cudaDeviceSynchronize();
 	
@@ -62,7 +74,7 @@ int main(int argc, char** argvs){
 	
 
 	//launchkernel();
-	cout<<"_dst.rows * _dst.cols = "<<_dst.rows<<" * "<<_dst.cols<<endl;
+	cout<<"Output Image Size: "<<_dst.rows<<" * "<<_dst.cols<<endl;
 	cv::imshow("Before", image);
 	cv::imshow("After",_dst);
 	cv::waitKey(0);
