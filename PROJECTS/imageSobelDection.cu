@@ -14,7 +14,8 @@ inline void cudaCheck(cudaError_t err, const char *call, const char* file, const
 	}
 }
 
-__constant__ int core_dev[2][9];
+__constant__ int core_dev[2][9] =  { {-1, 0, 1, -2, 0, 2, -1, 0, 1},\
+		            {-1,-2,-1,  0, 0, 0,  1, 2, 1} } ;
 
 __global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows){
 	int p_id = blockDim.x * blockIdx.x + threadIdx.x;
@@ -47,7 +48,7 @@ __global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows){
 }
 
 int main(int argc, char** argvs){
-	int core_h[][9] = { {-1, 0, 1, -2, 0, 2, -1, 0, 1},\
+	//int core_h[][9] = { {-1, 0, 1, -2, 0, 2, -1, 0, 1},\
 		            {-1,-2,-1,  0, 0, 0,  1, 2, 1} } ;
 	Mat image = imread(argvs[1],IMREAD_GRAYSCALE);
 	Mat outimage = Mat::ones(image.rows, image.cols, CV_8UC1 );
@@ -60,7 +61,7 @@ int main(int argc, char** argvs){
 	
 	CUDACHECK(cudaMalloc((void**)&outptr, sizeof(uchar) * image.cols * image.rows));
 
-	CUDACHECK(cudaMemcpyToSymbol(core_dev[0], core_h[0], sizeof(int) * 9 *2));
+        //CUDACHECK(cudaMemcpyToSymbol(core_dev[0], core_h[0], sizeof(int) * 9 *2));
 
 	dim3 grid(1024,1,1);
         dim3 block(1024,1,1);
