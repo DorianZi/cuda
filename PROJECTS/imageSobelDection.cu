@@ -8,14 +8,15 @@ using namespace cv;
 
 inline void cudaCheck(cudaError_t err, const char *call, const char* file, const unsigned line){
 	if(err != cudaSuccess){
-		cout<<file<<"("<<line<<"): "<<call<<" failed with "<<err<<endl;
+		cout<<file<<"("<<line<<"): "<<call<<" failed with "<< "'"<<cudaGetErrorString(err)<<"'"<<endl;
 		abort();
 		exit(1);
 	}
 }
 
+__constant__ int core_dev[2][9];
 
-__global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows, int* core_1, int* core_2){
+__global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows){
 	int p_id = blockDim.x * blockIdx.x + threadIdx.x;
 	//        <cols>
 	//        a b c 
@@ -37,8 +38,8 @@ __global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows, i
 	int sum_2 = 0;
 	int sum;
 	for(int i=0 ; i<9 ; i++ ){
-		sum_1 += val[i] * core_1[i];
-		sum_2 += val[i] * core_2[i];
+		sum_1 += val[i] * core_dev[0][i];
+		sum_2 += val[i] * core_dev[1][i];
 	}
 	sum = sqrt((double)(sum_1*sum_1 + sum_2*sum_2));
 	sum = (sum>=0 && sum<=255)? sum:(sum<0? 0:255);
@@ -46,28 +47,24 @@ __global__ void compute_sobel(uchar* inptr, uchar* outptr, int cols, int rows, i
 }
 
 int main(int argc, char** argvs){
-	int core_h_1[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1} ;
-	int core_h_2[9] = {-1,-2,-1,  0, 0, 0,  1, 2, 1} ;
+	int core_h[][9] = { {-1, 0, 1, -2, 0, 2, -1, 0, 1},\
+		            {-1,-2,-1,  0, 0, 0,  1, 2, 1} } ;
 	Mat image = imread(argvs[1],IMREAD_GRAYSCALE);
 	Mat outimage = Mat::ones(image.rows, image.cols, CV_8UC1 );
 	cout<<"channels = "<< image.channels()<<endl;
 	uchar* inptr;
 	uchar* outptr;
-	int* core_d_1;
-	int* core_d_2;
+	
 	CUDACHECK(cudaMalloc((void**)&inptr, sizeof(uchar) * image.cols * image.rows));
-	CUDACHECK(cudaMalloc((void**)&outptr, sizeof(uchar) * image.cols * image.rows));
-	CUDACHECK(cudaMalloc((void**)&core_d_1, sizeof(int) * 9 ));
-	CUDACHECK(cudaMalloc((void**)&core_d_2, sizeof(int) * 9 ));
-
 	CUDACHECK(cudaMemcpy(inptr, image.data, sizeof(uchar) * image.cols * image.rows,  cudaMemcpyHostToDevice));
-	CUDACHECK(cudaMemcpy(core_d_1, core_h_1, sizeof(int) * 9,  cudaMemcpyHostToDevice));
-	CUDACHECK(cudaMemcpy(core_d_2, core_h_2, sizeof(int) * 9,  cudaMemcpyHostToDevice));
+	
+	CUDACHECK(cudaMalloc((void**)&outptr, sizeof(uchar) * image.cols * image.rows));
 
+	CUDACHECK(cudaMemcpyToSymbol(core_dev[0], core_h[0], sizeof(int) * 9 *2));
 
 	dim3 grid(1024,1,1);
         dim3 block(1024,1,1);
-	compute_sobel<<<grid, block>>>(inptr, outptr, image.cols, image.rows,core_d_1,core_d_2);
+	compute_sobel<<<grid, block>>>(inptr, outptr, image.cols, image.rows);
 	CUDACHECK(cudaGetLastError());
 	CUDACHECK(cudaDeviceSynchronize());
 	CUDACHECK(cudaMemcpy(outimage.data,outptr, sizeof(uchar) * image.cols * image.rows, cudaMemcpyDeviceToHost));
